@@ -1,6 +1,14 @@
 const mongoose = require('mongoose')
 
 const contactSchema = mongoose.Schema({
+    /* @user_id protect contact route so only a logged in user 
+    * can perform CRUD operations
+    */
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
+    },
     name: {
         type:String,
         required: [true, "Please add the contact name"]
