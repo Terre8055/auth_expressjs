@@ -5,7 +5,7 @@ const contactSchema = mongoose.Schema({
     * can perform CRUD operations
     */
     user_id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId, //have user id when contact is created to be assoc w/ user
         required: true,
         ref: "User"
     },
