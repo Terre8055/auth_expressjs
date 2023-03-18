@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const User = require('../models/userModels')
 
 
@@ -52,7 +53,35 @@ const registerUser = asyncHandler(async (req,res) => {
 //access public
 
 const loginUser = asyncHandler(async (req,res) => {
-    res.json({message: 'Login the user'})
+    const {email, password} = req.body
+
+    //check to find empty fields
+    if(!email || !password){
+        res.status(400); //validation_error
+        throw new Error("All fields are mandatory")
+    }
+    
+    //check if user exists in database
+    const user = await User.findOne({email})
+    
+    //compare password with hashedpassword
+    if(user && (await bcrypt.compare(password, user.password))){
+        const accessToken = jwt.sign({
+            user: {
+                username: user.username,
+                email: user.email,
+                id: user.id
+            }
+        },
+        process.env.ACCESS_TOKEN_SECRET, //find access token in env 
+        {expiresIn: "1m"}
+      )
+      res.status(200).json({accessToken})
+    }else{
+        res.status(401)//email or password does not match
+        throw new Error("email or password is not valid")
+    }
+    
 }) 
 
 //@desc Info of current User
