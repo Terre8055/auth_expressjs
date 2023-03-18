@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler')
+const bcrypt = require('bcrypt')
 const User = require('../models/userModels')
 
 
@@ -15,7 +16,19 @@ const registerUser = asyncHandler(async (req,res) => {
         res.status(400);
         throw new Error("All fields are mandatory")
     }
+
+    //check to see if user already exist
+    const userAvailable = await User.findOne({email});
+    if (userAvailable){
+        res.status(400);
+        throw new Error("User already registered")
+    }
+
+    //hash password
+    const hashedPassword = await bcrypt.hash(password, 10)
+
     res.json({message: 'Register the user'})
+
 }) 
 
 //@desc lOGIN User
