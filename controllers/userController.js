@@ -8,6 +8,13 @@ const User = require('../models/userModels')
 //access public
 
 const registerUser = asyncHandler(async (req,res) => {
+    const {username, email, password} = req.body
+    console.log(req.body)
+    //check input to find null values
+    if(!username || !email || !password){
+        res.status(400);
+        throw new Error("All fields are mandatory")
+    }
     res.json({message: 'Register the user'})
 }) 
 
